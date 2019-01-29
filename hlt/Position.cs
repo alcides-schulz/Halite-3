@@ -1,0 +1,85 @@
+﻿using System;
+using static Halite3.hlt.Direction;
+
+namespace Halite3.hlt
+{
+    /// <summary>
+    /// A position is an object with x and y values indicating the absolute position on the game map.
+    /// </summary>
+    /// <see cref="https://halite.io/learn-programming-challenge/api-docs#position"/>
+    public class Position
+    {
+        public readonly int x;
+        public readonly int y;
+        public readonly int id;
+
+        public Position(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+            this.id = x * 1000 + y;
+        }
+
+        public override string ToString()
+        {
+            return "(" + x + "," + y + ")";
+        }
+
+        /// <summary>
+        /// Returns a new position based on moving one unit in the given direction from the given position.
+        /// Does not account for toroidal wraparound, that's done in GameMap.
+        /// </summary>
+        /// <seealso cref="GameMap.Normalize(Position)"/>
+        public Position DirectionalOffset(Direction d)
+        {
+            int dx;
+            int dy;
+
+            switch (d)
+            {
+                case NORTH:
+                    dx = 0;
+                    dy = -1;
+                    break;
+
+                case SOUTH:
+                    dx = 0;
+                    dy = 1;
+                    break;
+
+                case EAST:
+                    dx = 1;
+                    dy = 0;
+                    break;
+
+                case WEST:
+                    dx = -1;
+                    dy = 0;
+                    break;
+
+                case STILL:
+                    dx = 0;
+                    dy = 0;
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unknown direction " + d);
+            }
+
+            return new Position(x + dx, y + dy);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (this.GetType() != obj.GetType()) return false;
+            Position other = (Position)obj;
+            return this.x == other.x && this.y == other.y;
+        }
+
+        public override int GetHashCode()
+        {
+            return id;
+        }
+    }
+}
